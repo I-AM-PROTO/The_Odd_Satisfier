@@ -24,7 +24,7 @@ class Block {
 	public int getypos () { return ypos; }
 }
 
-public class Snake_gameboard { // 0:빈칸  1:몸통  2:머리  3:사과  -1:벽?
+public class Snake_gameboard {
 	private Block[][] gameBoard;
 	private int width, height;
 	
