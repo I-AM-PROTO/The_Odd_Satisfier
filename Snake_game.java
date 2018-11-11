@@ -1,4 +1,5 @@
 package snake_gameboard;
+import java.util.Scanner;
 
 enum Direction {
 	LEFT(0,-1), RIGHT(0, 1), UP(-1, 0), DOWN(1, 0), NULL(1000, 1000);
@@ -23,7 +24,23 @@ public class Snake_game {
 	
 	//getting input method - return direction or NULL
 	Direction getDirInput () {
-		return Direction.UP;
+		Scanner scanner = new Scanner(System.in);
+		int choice;
+		System.out.print("Where from now? (l;1 r;2 u;3 d;4) >> ");
+		//interval();
+		if (scanner.hasNextInt())
+			choice = scanner.nextInt();
+		else 
+			return Direction.NULL;
+			
+		switch (choice) {
+		case 1: return Direction.LEFT;
+		case 2: return Direction.RIGHT;
+		case 3: return Direction.UP;
+		case 4: return Direction.DOWN;
+		}
+		
+		return Direction.NULL;
 	}
 	
 	//true:game not ended , false:game ended
@@ -40,13 +57,14 @@ public class Snake_game {
 			gameBoard.setBlock(tail.getxpos(), tail.getypos(), Direction.NULL);
 			tail = temp;
 		}
-		
-		temp = getNextBlock(head);
-		newdir = getDirInput();
-		if(newdir == Direction.NULL)
+
+		if ((newdir = getDirInput()) != Direction.NULL) //new direction for current head
+			gameBoard.setBlock(head.getxpos(), head.getypos(), newdir);
+		else //no direction input = keep direction
 			newdir = head.getDirection();
+		
 		gameBoard.setBlock(head.getxpos(), head.getypos(), BlockType.BODY);
-		head = temp;
+		head = getNextBlock(head);
 		
 		if(!gameBoard.isValidHead(head.getxpos(), head.getypos())) { //gameover - lose
 			gameResult = false;
@@ -58,7 +76,7 @@ public class Snake_game {
 			growthLen += 3;
 			createApple();
 		}
-		
+
 		gameBoard.setBlock(head.getxpos(), head.getypos(), BlockType.HEAD);
 		gameBoard.setBlock(head.getxpos(), head.getypos(), newdir);
 		
@@ -112,30 +130,25 @@ public class Snake_game {
 		growthLen=0;
 		gameResult=true;
 		createApple();
-		gameBoard.displayBoard();
-		for(int i=0; i<7; i++) {
-			System.out.println(moveSnakeAndCheck());
-			System.out.println(gameResult);
-			System.out.println(growthLen + " " + snakeLen);
+		while(true) {
 			gameBoard.displayBoard();
+			if(!moveSnakeAndCheck()) {
+				if(gameResult) {
+					System.out.println("VICTOOORY ROOOOYALE!!!");
+					break;
+				} else {
+					System.out.println("Gameover");
+					break;
+				}
+			}
 		}
 		
-		
-		//infinite loop
-		/*
-		 * temp_direction = get input();
-		 * if(temp = direction.NULL) keep head's direction
-		 * else head's direction := temp 
-		 * 
-		 * move (new head's direction = direction of the one before)
-		 * 		returns whether game ended (true=game end)
-		 * interval
-		 */
-		//end loop
+		gameBoard.displayBoard();
+
 	}
 	
 	public static void main (String[] args) {
-		Snake_game game = new Snake_game(1, 16, 5);
+		Snake_game game = new Snake_game(1, 3, 3);
 		game.run();
 	}
 }
