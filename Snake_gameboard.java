@@ -1,9 +1,7 @@
-package snake_gameboard;
+package Snake;
 import java.util.Arrays;
-
-enum BlockType {
-	BLANK, BODY, HEAD, APPLE, WALL;
-}
+import Snake.Direction;
+import Snake.BlockType;
 
 class Block {
 	//each block type, direction of snake body, x and y position 
