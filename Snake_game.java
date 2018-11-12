@@ -1,14 +1,7 @@
-package snake_gameboard;
+package Snake;
 import java.util.Scanner;
-
-enum Direction {
-	LEFT(0,-1), RIGHT(0, 1), UP(-1, 0), DOWN(1, 0), NULL(1000, 1000);
-
-	private int xmove, ymove;
-	private Direction(int xmove, int ymove) { this.xmove = xmove; this.ymove = ymove; }
-	public int getXdir () { return xmove; } 
-	public int getYdir () { return ymove; } 
-}
+import Snake.Direction;
+import Snake.BlockType;
 
 public class Snake_game {
 	final private double defaultInterval = 1000;
@@ -23,7 +16,7 @@ public class Snake_game {
 	//settings method - board size, speed, etc
 
 	//getting input method - return direction or NULL
-	private Direction getDirInput () {
+	protected Direction getDirInput () {
 		Scanner scanner = new Scanner(System.in);
 		int choice;
 		System.out.print("Where from now? (l;1 r;2 u;3 d;4) >> ");
@@ -42,7 +35,9 @@ public class Snake_game {
 
 		return Direction.NULL;
 	}
-
+	
+	protected Block getHead() { return head; }
+	
 	//true:game not ended , false:game ended
 	private boolean moveSnakeAndCheck () {
 		Block temp;
@@ -114,6 +109,7 @@ public class Snake_game {
 		this.gameWidth = gameWidth;
 		this.gameHeight = gameHeight;
 		this.snakeLen = 2; // 1head + 1body
+		this.growthLen = 0;
 		this.goalLen = gameHeight * gameWidth;
 
 		gameBoard = new Snake_gameboard(gameHeight, gameWidth);
@@ -122,14 +118,13 @@ public class Snake_game {
 	}
 
 	public void run() {
-		growthLen=0;
-		gameResult=true;
 		createApple();
 		while(true) {
 			gameBoard.displayBoard();
 			if(!moveSnakeAndCheck()) {
 				if(gameResult) {
 					System.out.println("VIKTOOORY ROOOOYALE!!! *default dances*");
+					gameBoard.setBlock(head.getxpos(), head.getypos(), BlockType.HEAD);
 					break;
 				} else {
 					System.out.println("Gameover");
@@ -143,7 +138,7 @@ public class Snake_game {
 	}
 
 	public static void main (String[] args) {
-		Snake_game game = new Snake_game(1, 3, 3);
+		Snake_game game = new Snake_game(1, 5, 5);
 		game.run();
 	}
 }
