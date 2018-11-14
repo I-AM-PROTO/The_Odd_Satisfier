@@ -1,8 +1,10 @@
-Snake board: allow size setting (Done!)
+Snake board
 
-           : allow difficulty setting (Done!)
+   : allow size setting (Done!)
+
+   : allow difficulty setting (Done!)
            
-           : Width must be higher than 2 (should start from 3)
+   : Width must be higher than 2 (should start from 3)
            
 Snake
  
