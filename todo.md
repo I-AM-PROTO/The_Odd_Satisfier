@@ -8,12 +8,12 @@ Snake : 11/08- one initial state, actual game implementation left
 
   : 11/11 - the game somewhat... works... on cmd... GUI implementation should be done on WEEK2
       
-  : - Interactive gameplay
+   - Interactive gameplay
       
    - Should rethink autoplay algorithm for (odd, odd) size board
      
-        - Swing (GUI)
+   - Swing (GUI)
                   
-        - settings?
+   - settings?
 
 AI: allow in game speed settings: speed 2x = duration .5x
