@@ -5,7 +5,8 @@ Snake board: allow size setting (Done!)
            : Width must be higher than 2 (should start from 3)
            
 Snake
-  : 11/08 - one initial state, actual game implementation left
+ 
+  : 11/08 - done initial state, actual game implementation left
       
   : 11/11 - the game somewhat... works... on cmd... GUI implementation should be done on WEEK2
       
