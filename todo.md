@@ -4,14 +4,16 @@ Snake board: allow size setting (Done!)
            
            : Width must be higher than 2 (should start from 3)
            
-Snake : done initial state on 11/08, actual game implementation left
+Snake : 11/08- one initial state, actual game implementation left
 
-      : 11/11 - the game somewhat... works... on cmd... GUI implementation should be done on WEEK2 (hopefully)
+      : 11/11 - the game somewhat... works... on cmd... GUI implementation should be done on WEEK2
       
-      : Left to do - game shouldn't stop for next input
+      : - Interactive gameplay
       
-                   - GUI
-                   
-                   - settings?
+        - Should rethink autoplay algorithm for (odd, odd) size board
+      
+        - Swing (GUI)
+                  
+        - settings?
 
 AI: allow in game speed settings: speed 2x = duration .5x
