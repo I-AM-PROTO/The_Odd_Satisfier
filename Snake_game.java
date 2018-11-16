@@ -12,6 +12,8 @@ public class Snake_game {
 	private Snake_gameboard gameBoard;
 	private Block head, tail;
 	private boolean gameResult; //true = win , false = lose 
+	private boolean pause = false;
+	private MainFrame mainFrame;
 
 	//settings method - board size, speed, etc
 
@@ -37,6 +39,7 @@ public class Snake_game {
 	}
 	
 	protected Block getHead() { return head; }
+	protected void pauseGame() { pause = !pause; }
 	
 	//true:game not ended , false:game ended
 	private boolean moveSnakeAndCheck () {
@@ -65,6 +68,8 @@ public class Snake_game {
 			gameResult = false;
 			return false;
 		} else if (snakeLen == goalLen) { //gameover - win
+			gameBoard.setBlock(head.getxpos(), head.getypos(), BlockType.HEAD);
+			gameBoard.setBlock(head.getxpos(), head.getypos(), newdir);
 			gameResult = true;
 			return false;
 		} else if (head.getBlockType() == BlockType.APPLE) {
@@ -111,6 +116,7 @@ public class Snake_game {
 		this.snakeLen = 2; // 1head + 1body
 		this.growthLen = 0;
 		this.goalLen = gameHeight * gameWidth;
+		this.mainFrame = new MainFrame(gameHeight+2, gameWidth+2);
 
 		gameBoard = new Snake_gameboard(gameHeight, gameWidth);
 		head = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2);
@@ -120,11 +126,11 @@ public class Snake_game {
 	public void run() {
 		createApple();
 		while(true) {
-			gameBoard.displayBoard();
+			mainFrame.repaintGameBoard(gameBoard);
+			interval();
 			if(!moveSnakeAndCheck()) {
 				if(gameResult) {
 					System.out.println("VIKTOOORY ROOOOYALE!!! *default dances*");
-					gameBoard.setBlock(head.getxpos(), head.getypos(), BlockType.HEAD);
 					break;
 				} else {
 					System.out.println("Gameover");
@@ -132,9 +138,7 @@ public class Snake_game {
 				}
 			}
 		}
-
-		gameBoard.displayBoard();
-
+		mainFrame.repaintGameBoard(gameBoard);
 	}
 
 	public static void main (String[] args) {
