@@ -1,5 +1,4 @@
 package Snake;
-import java.util.Arrays;
 import Snake.Direction;
 import Snake.BlockType;
 
@@ -62,23 +61,16 @@ public class Snake_gameboard {
 		gameBoard[(height-1)/2][(width-1)/2 - 1].setBlockData(Direction.RIGHT);
 	}
 	
-	//display board - have to change to GUI later
-	public void displayBoard() {
-		for(int i=0; i<height; i++){
-			for(int j=0; j<width; j++) {
-				System.out.print(convertBlock(gameBoard[i][j]));
-			}
-			System.out.println();
-		}
-	}
-
+	public int getWidth() { return width; }
+	public int getHeight() { return height; }
+	
 	//gives block
 	public Block getBlock(int x, int y) { return gameBoard[x][y]; }
 	
 	//gets and changes block data
 	public void setBlock(int x, int y, BlockType type) { gameBoard[x][y].setBlockData(type); }
 	public void setBlock(int x, int y, Direction dir) { gameBoard[x][y].setBlockData(dir); }
-	
+
 	//whether snake can exist or not
 	public boolean isValidHead(int x, int y) {
 		if(0 < x && x < height-1 && 0 < y && y < width-1 && gameBoard[x][y].getBlockType() != BlockType.BODY)
@@ -90,8 +82,34 @@ public class Snake_gameboard {
 	public boolean isValidBlank(int x, int y) {
 		return 0 < x && x < height-1 && 0 < y && y < width-1 && gameBoard[x][y].getBlockType() == BlockType.BLANK;
 	}
-
-	//have to change into GUI later
+	
+	public Direction getPastDirection (Block b) {
+		int x = b.getxpos();
+		int y = b.getypos();
+		
+		if(gameBoard[x-1][y].getDirection() == Direction.DOWN)
+			return Direction.DOWN;
+		else if(gameBoard[x+1][y].getDirection() == Direction.UP)
+			return Direction.UP;
+		else if(gameBoard[x][y-1].getDirection() == Direction.RIGHT)
+			return Direction.RIGHT;
+		else if(gameBoard[x][y+1].getDirection() == Direction.LEFT)
+			return Direction.LEFT;
+		else
+			return Direction.NULL;
+	}
+	
+	//for debugging
+	public void displayBoard() {
+		for(int i=0; i<height; i++){
+			for(int j=0; j<width; j++) {
+				System.out.print(convertBlock(gameBoard[i][j]));
+			}
+			System.out.println();
+		}
+	}
+	
+	//for debugging
 	public char convertBlock(Block n) {
 		switch(n.getBlockType()) {
 		case BLANK: return '□'; //blank
@@ -102,5 +120,6 @@ public class Snake_gameboard {
 		default: return 'X';
 		}
 	}
+
 	
 }
