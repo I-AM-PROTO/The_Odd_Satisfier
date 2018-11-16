@@ -16,7 +16,7 @@ Snake
       
    - Should rethink autoplay algorithm for (odd, odd) size board
      
-   - Swing (GUI)
+   - Swing (GUI) (Done!)
                   
    - settings?
 
