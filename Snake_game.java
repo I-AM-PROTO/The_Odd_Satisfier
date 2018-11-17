@@ -5,24 +5,49 @@ import Snake.BlockType;
 
 public class Snake_game {
 	final private double defaultInterval = 1000;
-	private double speed;
+	final private int defaultSpeed = 5;
 	private long inGameInterval; //interval between snake moves
 	private int gameWidth, gameHeight; // where snake can move (excludes walls)
 	private int growthLen, snakeLen, goalLen; // turn left for snake to grow (3 each apple, i guess)
 	private Snake_gameboard gameBoard;
 	private Block head, tail;
-	private boolean gameResult; //true = win , false = lose 
-	private boolean pause = false;
+	private boolean gameResult; //true = win , false = lose
 	private MainFrame mainFrame;
 
-	//settings method - board size, speed, etc
-
+	private void setBodyID() {
+		Block pastBlock = tail, currBlock = getNextBlock(tail);
+		Direction pastDir, currDir;
+		int id;
+		
+		tail.setBodyID(-1);
+		for(int i=0; i<snakeLen-2; i++) {
+			pastDir = pastBlock.getDirection();
+			currDir = currBlock.getDirection();
+			
+			if(pastDir == currDir)
+				if(currDir == Direction.UP || currDir == Direction.DOWN) id = 0; else id = 1;
+			else if(pastDir == Direction.UP)
+				if(currDir == Direction.LEFT) id = 2; else id = 3;
+			else if(pastDir == Direction.DOWN)
+				if(currDir == Direction.LEFT) id = 4; else id = 5;
+			else if(pastDir == Direction.RIGHT)
+				if(currDir == Direction.UP) id = 4; else id = 2;
+			else
+				if(currDir == Direction.UP) id = 5; else id = 3;
+			
+			currBlock.setBodyID(id);
+			pastBlock = currBlock;
+			currBlock = getNextBlock(currBlock);
+		}
+	}
+	
 	//getting input method - return direction or NULL
 	protected Direction getDirInput () {
+		//console input
+		/*
 		Scanner scanner = new Scanner(System.in);
 		int choice;
 		System.out.print("Where from now? (l;1 r;2 u;3 d;4) >> ");
-		//interval();
 		if (scanner.hasNextInt())
 			choice = scanner.nextInt();
 		else 
@@ -36,10 +61,13 @@ public class Snake_game {
 		}
 
 		return Direction.NULL;
+		*/
+		
+		//GUI input
+		return mainFrame.getInputDir();
 	}
 	
 	protected Block getHead() { return head; }
-	protected void pauseGame() { pause = !pause; }
 	
 	//true:game not ended , false:game ended
 	private boolean moveSnakeAndCheck () {
@@ -106,43 +134,114 @@ public class Snake_game {
 			System.out.println(e.getMessage());
 		}
 	}
+	
+	void interval(int time) {
+		try {
+			Thread.sleep(time);
+		} catch(InterruptedException e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
 	//get settings, create board, put head in center, direction right
-	public Snake_game(double speed, int gameHeight, int gameWidth) {
-		this.speed = speed;
-		this.inGameInterval = (long)(defaultInterval / speed);
+	public Snake_game(int gameHeight, int gameWidth) {
+		this.inGameInterval = (long)(defaultInterval / defaultSpeed);
 		this.gameWidth = gameWidth;
 		this.gameHeight = gameHeight;
 		this.snakeLen = 2; // 1head + 1body
 		this.growthLen = 0;
 		this.goalLen = gameHeight * gameWidth;
-		this.mainFrame = new MainFrame(gameHeight+2, gameWidth+2);
+		this.mainFrame = new MainFrame(this, defaultSpeed, gameHeight+2, gameWidth+2);
 
 		gameBoard = new Snake_gameboard(gameHeight, gameWidth);
 		head = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2);
 		tail = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2 - 1);
-	}
 
-	public void run() {
 		createApple();
+	}
+	
+	public void setSpeed(int speed) { inGameInterval = (long)(defaultInterval / speed); }
+	
+	public void resetGame() {
+		this.snakeLen = 2; // 1head + 1body
+		this.growthLen = 0;
+		
+		gameBoard.resetBoard();
+		mainFrame.resetFrame();
+		head = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2);
+		tail = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2 - 1);
+		
+		createApple();
+	}
+	
+	public void resetGame(int gameHeight, int gameWidth) {
+		this.gameWidth = gameWidth;
+		this.gameHeight = gameHeight;
+		this.snakeLen = 2;
+		this.growthLen = 0;
+		this.goalLen = gameHeight * gameWidth;
+		mainFrame.resetFrame(gameHeight+2, gameWidth+2);
+
+		gameBoard = new Snake_gameboard(gameHeight, gameWidth);
+		head = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2);
+		tail = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2 - 1);
+
+		createApple();
+	}
+	
+	private void infiniteInterval() {
+		 while(mainFrame.getPause() && !mainFrame.getReplay())
+			 interval(100);
+	}
+	
+	public void run() {
 		while(true) {
+			setBodyID();
 			mainFrame.repaintGameBoard(gameBoard);
+			if(mainFrame.getPause())
+				infiniteInterval();
 			interval();
+
+			if(mainFrame.getReplay()) {
+				resetGame();
+				continue;
+			}
+
 			if(!moveSnakeAndCheck()) {
 				if(gameResult) {
 					System.out.println("VIKTOOORY ROOOOYALE!!! *default dances*");
-					break;
+					mainFrame.repaintGameBoard(gameBoard);
 				} else {
 					System.out.println("Gameover");
-					break;
+					mainFrame.repaintGameBoard(gameBoard);
 				}
+				resetGame();
 			}
 		}
-		mainFrame.repaintGameBoard(gameBoard);
+	}
+	
+	protected void autoRun() {
+		while(true) {
+			setBodyID();
+			mainFrame.repaintGameBoard(gameBoard);
+			if(mainFrame.getPause())
+				infiniteInterval();
+			interval();
+
+			if(mainFrame.getReplay()) {
+				resetGame();
+				continue;
+			}
+
+			if(!moveSnakeAndCheck()) {
+				System.out.println("ayy");
+				return;
+			}
+		}
 	}
 
 	public static void main (String[] args) {
-		Snake_game game = new Snake_game(1, 5, 5);
+		Snake_game game = new Snake_game(14, 14);
 		game.run();
 	}
 }
