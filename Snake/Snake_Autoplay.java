@@ -1,19 +1,22 @@
 package Snake;
 
 public class Snake_Autoplay extends Snake_game {
-	private Snake_gameboard gameBoard;
 	private Block head;
 	private int gameWidth, gameHeight;
-	private int goalLen;
 	private int mode;
 	private boolean cntr;
 	
-	public Snake_Autoplay (double speed, int gameHeight, int gameWidth) {
-		super(speed, gameHeight, gameWidth);
-		this.gameWidth = gameWidth;
-		this.gameHeight = gameHeight;
-		this.goalLen = gameWidth*gameHeight;
-		
+	public Snake_Autoplay () { super(4, 4); }
+
+	public void getRandomSize () {
+		gameHeight = (int)(Math.random() * 8) + 3;
+		if(gameHeight % 2 == 1) do {
+			gameWidth = (int)(Math.random() * 8) + 3;
+		} while(gameWidth % 2 == 1);
+		else gameWidth = (int)(Math.random() * 8) + 3;
+	}
+
+	public void getMode () {
 		if(gameHeight % 2 == 0 && gameWidth % 2 == 0) {
 			mode = 0;
 		} else if(gameHeight % 2 == 1 && gameWidth % 2 == 1) {
@@ -27,9 +30,18 @@ public class Snake_Autoplay extends Snake_game {
 			this.gameHeight = temp;
 			mode = 3;
 		}
-
 	}
 
+	public void runAutoPlay() {
+		while(true) {
+			getRandomSize();
+			resetGame(gameHeight, gameWidth);
+			getMode();
+			autoRun();
+		}
+	}
+
+	
 	private Direction EvenEven (int x, int y) {
 		if(y == 1) {
 			if (x == gameHeight) return Direction.RIGHT;
@@ -166,7 +178,7 @@ public class Snake_Autoplay extends Snake_game {
 	}
 
 	public static void main (String[] args) {
-		Snake_Autoplay game = new Snake_Autoplay(1, 5, 6);
-		game.run();
+		Snake_Autoplay game = new Snake_Autoplay();
+		game.runAutoPlay();
 	}
 }

@@ -7,6 +7,7 @@ class Block {
 	private BlockType type;
 	private Direction dir;
 	private int xpos, ypos;
+	private int bodyID;
 	
 	//constructor
 	public Block (BlockType type, int xpos, int ypos) { this(xpos, ypos); this.type = type; }
@@ -19,6 +20,8 @@ class Block {
 	public Direction getDirection () { return dir; }
 	public int getxpos () { return xpos; }
 	public int getypos () { return ypos; }
+	public void setBodyID (int bodyID) { this.bodyID = bodyID; }
+	public int getBodyID () { return bodyID; }
 }
 
 public class Snake_gameboard {
@@ -83,23 +86,7 @@ public class Snake_gameboard {
 		return 0 < x && x < height-1 && 0 < y && y < width-1 && gameBoard[x][y].getBlockType() == BlockType.BLANK;
 	}
 	
-	public Direction getPastDirection (Block b) {
-		int x = b.getxpos();
-		int y = b.getypos();
-		
-		if(gameBoard[x-1][y].getDirection() == Direction.DOWN)
-			return Direction.DOWN;
-		else if(gameBoard[x+1][y].getDirection() == Direction.UP)
-			return Direction.UP;
-		else if(gameBoard[x][y-1].getDirection() == Direction.RIGHT)
-			return Direction.RIGHT;
-		else if(gameBoard[x][y+1].getDirection() == Direction.LEFT)
-			return Direction.LEFT;
-		else
-			return Direction.NULL;
-	}
-	
-	//for debugging
+	//display board - have to change to GUI later
 	public void displayBoard() {
 		for(int i=0; i<height; i++){
 			for(int j=0; j<width; j++) {
@@ -109,17 +96,17 @@ public class Snake_gameboard {
 		}
 	}
 	
-	//for debugging
+	//have to change into GUI later
 	public char convertBlock(Block n) {
 		switch(n.getBlockType()) {
-		case BLANK: return 'â–¡'; //blank
-		case WALL: return 'â–¨'; //wall
-		case BODY: return 'â– '; //body
-		case HEAD: return 'â—'; //head
-		case APPLE: return 'â–²'; //apple
+		case BLANK: return '¡à'; //blank
+		case WALL: return '¢É'; //wall
+		case BODY: return '¡á'; //body
+		case HEAD: return '¡Ü'; //head
+		case APPLE: return '¡ã'; //apple
 		default: return 'X';
 		}
 	}
-
 	
+	public void resetBoard() { initializeGameBoard(); }
 }
