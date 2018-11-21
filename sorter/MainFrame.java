@@ -1,18 +1,15 @@
 package sorter;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 
 public class MainFrame extends JFrame {
-	SortPanel sortPanel;
-	SettingsPanel settingsPanel;
+	private SortPanel sortPanel;
+	private SettingsPanel settingsPanel;
 	
 	public MainFrame() {
 		setTitle("SORT");
@@ -27,13 +24,13 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 	}
 	
-	public void test(int i) {
+	public void resizeBoxes(int i) {
 		sortPanel.resizePanel(i);
 	}
 	
 	public static void main (String[] args) {
 		MainFrame mf = new MainFrame();
-		mf.test(6);
+		mf.resizeBoxes(6);
 	}
 }
 
@@ -64,13 +61,17 @@ class SortPanel extends JPanel {
 }
 
 class SettingsPanel extends JPanel {
-	MainFrame mainframe;
-	JRadioButton[] sortNumSetting = new JRadioButton[3];
+	private MainFrame mainFrame;
+	private JRadioButton[] sortNumSetting = new JRadioButton[3];
+	private JSlider speedSetting = new JSlider();
+	private JButton[] btnSetting = new JButton[4];
+	private String[] btnText = {"Pause (P)", "Replay", "GitHub", "Back to Menu"};
+	private JLabel[] ghostLabel = new JLabel[2];
 	
-	public SettingsPanel(MainFrame mainframe) {
-		this.mainframe = mainframe;
-		ButtonGroup radioGroup = new ButtonGroup();
+	public SettingsPanel(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 		
+		//Big title & Panel
 		setLayout(null);
 		JLabel title = new JLabel("Settings", SwingConstants.CENTER);
 		title.setSize(100, 30);
@@ -86,13 +87,89 @@ class SettingsPanel extends JPanel {
 		center.setOpaque(true);
 		this.add(center);
 		
-		center.setLayout(new FlowLayout());
-		center.add(new JLabel("¡¡"));
-		center.add(new JLabel("Sort Number", SwingConstants.CENTER));
+		//Panel Layout & Components
+		GridBagLayout g = new GridBagLayout();
+		center.setLayout(g);
+		
+		GridBagConstraints newLine = new GridBagConstraints();
+		GridBagConstraints keepLine = new GridBagConstraints();
+		GridBagConstraints btnLine = new GridBagConstraints();
+		newLine.gridwidth = GridBagConstraints.REMAINDER;
+		keepLine.gridwidth = GridBagConstraints.BASELINE;
+		keepLine.weightx = 1.0;
+		newLine.weightx = 1.0;
+		
+		for(int i=0; i<2; i++) {
+			ghostLabel[i] = new JLabel(" ¡¤ ");
+			ghostLabel[i].setFont(new Font(ghostLabel[i].getFont().getFontName(), Font.PLAIN, 40));
+			g.setConstraints(ghostLabel[i], newLine);
+		}
+		
+		JLabel numLabel = new JLabel("[Box Number]", SwingConstants.CENTER);
+		numLabel.setFont(new Font(numLabel.getFont().getFontName(), Font.PLAIN, 18));
+		g.setConstraints(numLabel, newLine);
+		center.add(numLabel);
+		ButtonGroup radioGroup = new ButtonGroup();
 		for(int i=0; i<3; i++) {
 			sortNumSetting[i] = new JRadioButton(Integer.toString(2*i+2));
 			radioGroup.add(sortNumSetting[i]);
 			center.add(sortNumSetting[i]);
+			g.setConstraints(sortNumSetting[i], i==2 ? newLine : keepLine);
+			sortNumSetting[i].addActionListener(new RadioListener(sortNumSetting[i], mainFrame));
 		}
+		sortNumSetting[2].setSelected(true);
+		
+		center.add(ghostLabel[0]);
+		
+		JLabel speedLabel = new JLabel("[Sort Speed]", SwingConstants.CENTER);
+		speedLabel.setFont(new Font(speedLabel.getFont().getFontName(), Font.PLAIN, 18));
+		g.setConstraints(speedLabel, newLine);
+		center.add(speedLabel);
+
+		speedSetting.setMinimum(0);
+		speedSetting.setMaximum(20);
+		speedSetting.setMajorTickSpacing(5);
+		speedSetting.setMinorTickSpacing(1);
+		speedSetting.setSnapToTicks(true);
+		speedSetting.setPaintTicks(true);
+		speedSetting.setPaintLabels(true);
+		//TODO add change listener
+		g.setConstraints(speedSetting, newLine);
+		center.add(speedSetting);
+		
+		center.add(ghostLabel[1]);
+		
+		JLabel menuLabel = new JLabel("[Menu]", SwingConstants.CENTER);
+		menuLabel.setFont(new Font(menuLabel.getFont().getFontName(), Font.PLAIN, 18));
+		g.setConstraints(menuLabel, newLine);
+		center.add(menuLabel);
+		
+		JPanel menuPanel = new JPanel();
+		menuPanel.setLayout(new GridLayout(2,2));
+		g.setConstraints(menuPanel, newLine);
+		Dimension buttonSize = new Dimension(140, 40);
+
+		for(int i=0; i<4; i++) {
+			btnSetting[i] = new JButton(btnText[i]);
+			btnSetting[i].setPreferredSize(buttonSize);
+			menuPanel.add(btnSetting[i]);
+		}
+		
+		//TODO add menu event
+		center.add(menuPanel);
+	}
+}
+
+class RadioListener implements ActionListener {
+	private int boxNum;
+	MainFrame mainFrame;
+	
+	public RadioListener(JRadioButton j, MainFrame mainFrame) {
+		boxNum = Integer.parseInt(j.getText());
+		this.mainFrame = mainFrame;
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		mainFrame.resizeBoxes(boxNum);
 	}
 }
