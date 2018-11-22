@@ -64,9 +64,10 @@ class SettingsPanel extends JPanel {
 	private MainFrame mainFrame;
 	private JRadioButton[] sortNumSetting = new JRadioButton[3];
 	private JSlider speedSetting = new JSlider();
+	private JSlider elementSetting = new JSlider();
 	private JButton[] btnSetting = new JButton[4];
-	private String[] btnText = {"Pause (P)", "Replay", "GitHub", "Back to Menu"};
-	private JLabel[] ghostLabel = new JLabel[2];
+	private final String[] btnText = {"Pause (P)", "Replay", "GitHub", "Back to Menu"};
+	private JLabel[] ghostLabel = new JLabel[3];
 	
 	public SettingsPanel(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -99,9 +100,9 @@ class SettingsPanel extends JPanel {
 		keepLine.weightx = 1.0;
 		newLine.weightx = 1.0;
 		
-		for(int i=0; i<2; i++) {
+		for(int i=0; i<3; i++) {
 			ghostLabel[i] = new JLabel(" ¡¤ ");
-			ghostLabel[i].setFont(new Font(ghostLabel[i].getFont().getFontName(), Font.PLAIN, 40));
+			ghostLabel[i].setFont(new Font(ghostLabel[i].getFont().getFontName(), Font.PLAIN, 20));
 			g.setConstraints(ghostLabel[i], newLine);
 		}
 		
@@ -115,12 +116,16 @@ class SettingsPanel extends JPanel {
 			radioGroup.add(sortNumSetting[i]);
 			center.add(sortNumSetting[i]);
 			g.setConstraints(sortNumSetting[i], i==2 ? newLine : keepLine);
-			sortNumSetting[i].addActionListener(new RadioListener(sortNumSetting[i], mainFrame));
+			sortNumSetting[i].addActionListener(new ActionListener() {				
+				public void actionPerformed(ActionEvent e) {
+					mainFrame.resizeBoxes(Integer.parseInt(((JRadioButton)e.getSource()).getText()));
+				}
+			});
 		}
 		sortNumSetting[2].setSelected(true);
-		
+
 		center.add(ghostLabel[0]);
-		
+
 		JLabel speedLabel = new JLabel("[Sort Speed]", SwingConstants.CENTER);
 		speedLabel.setFont(new Font(speedLabel.getFont().getFontName(), Font.PLAIN, 18));
 		g.setConstraints(speedLabel, newLine);
@@ -138,6 +143,24 @@ class SettingsPanel extends JPanel {
 		center.add(speedSetting);
 		
 		center.add(ghostLabel[1]);
+		
+		JLabel elementLabel = new JLabel("[Element Number]", SwingConstants.CENTER);
+		elementLabel.setFont(new Font(elementLabel.getFont().getFontName(), Font.PLAIN, 18));
+		g.setConstraints(elementLabel, newLine);
+		center.add(elementLabel);
+		
+		elementSetting.setMinimum(5);
+		elementSetting.setMaximum(20);
+		elementSetting.setMajorTickSpacing(5);
+		elementSetting.setMinorTickSpacing(1);
+		elementSetting.setSnapToTicks(true);
+		elementSetting.setPaintTicks(true);
+		elementSetting.setPaintLabels(true);
+		//TODO add change listener
+		g.setConstraints(elementSetting, newLine);
+		center.add(elementSetting);
+		
+		center.add(ghostLabel[2]);
 		
 		JLabel menuLabel = new JLabel("[Menu]", SwingConstants.CENTER);
 		menuLabel.setFont(new Font(menuLabel.getFont().getFontName(), Font.PLAIN, 18));
@@ -157,19 +180,5 @@ class SettingsPanel extends JPanel {
 		
 		//TODO add menu event
 		center.add(menuPanel);
-	}
-}
-
-class RadioListener implements ActionListener {
-	private int boxNum;
-	MainFrame mainFrame;
-	
-	public RadioListener(JRadioButton j, MainFrame mainFrame) {
-		boxNum = Integer.parseInt(j.getText());
-		this.mainFrame = mainFrame;
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		mainFrame.resizeBoxes(boxNum);
 	}
 }
