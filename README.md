@@ -17,10 +17,11 @@ Plan
 
      Week2(11/12 - 11/18): Snake autoplay AI + Swing implementation
      
-     Week3(11/19 - 11/25): Implement sorting algorithms and visualize
+     Week3(11/19 - 11/25): Implement sorting ~~algorithms and visualize~~ frame
      
-     Week4(11/26 - 12/2): Genetic algorithm
+     Week4(11/26 - 12/2): ~~Genetic algorithm~~ Finish frame, implement algorithms
      
      Week5(12/3 - 12/9) : Selection screen and overall debugging
 
 *Updated 11/14, 2018
+*Second update 11/26, 2018
