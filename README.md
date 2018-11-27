@@ -24,4 +24,5 @@ Plan
      Week5(12/3 - 12/9) : Selection screen and overall debugging
 
 *Updated 11/14, 2018
+
 *Second update 11/26, 2018
