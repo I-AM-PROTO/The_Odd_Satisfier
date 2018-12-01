@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 public class SettingsPanel extends JPanel {
 	public final static int minElement = 10;
 	public final static int maxElement = 120; 
+	public final static int DEFAULT_SORT_SPEED = 10;
 	private MainFrame mainFrame;
 	private JRadioButton[] sortNumSetting = new JRadioButton[4];
 	private JSlider speedSetting = new JSlider();
@@ -98,7 +99,7 @@ public class SettingsPanel extends JPanel {
 		speedSetting.setMaximum(20);
 		speedSetting.setMajorTickSpacing(5);
 		speedSetting.setMinorTickSpacing(1);
-		speedSetting.setValue(10);
+		speedSetting.setValue(DEFAULT_SORT_SPEED);
 		speedSetting.setSnapToTicks(true);
 		speedSetting.setPaintTicks(true);
 		speedSetting.setPaintLabels(true);
@@ -160,5 +161,9 @@ public class SettingsPanel extends JPanel {
 		
 		//TODO add menu event
 		center.add(menuPanel);
+	}
+	
+	public void resetSettings() {
+		//TODO reset settings
 	}
 }

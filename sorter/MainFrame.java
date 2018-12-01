@@ -31,6 +31,11 @@ public class MainFrame extends JFrame {
 		sortPanel.setElementNum(elementNum);
 	}
 	
+	public void reset() {
+		sortPanel.resetBoxes();
+		settingsPanel.resetSettings();
+	}
+	
 	public void notifySwap(int a, int b) { sortPanel.notifySwap(a, b); } //vector shuffle
 	public void bufferSwap(int a, int index) { sortPanel.bufferSwap(a, index); } //buffer swap elements mid-sort
 	public void notifySwap(int index) { sortPanel.notifySwap(index); } //swap buffered elements

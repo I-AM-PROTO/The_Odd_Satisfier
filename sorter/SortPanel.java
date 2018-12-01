@@ -17,7 +17,6 @@ class SortPanel extends JPanel {
 	SortBox[] sortBoxes = new SortBox[6];
 	public static final int INITIAL_ELEMENT_NUM = 60;
 	private int elementNum = INITIAL_ELEMENT_NUM;
-	private boolean needResize = false;
 	
 	public SortPanel() {
 		setLayout(new GridLayout(2,3,5,5));
@@ -33,20 +32,12 @@ class SortPanel extends JPanel {
 		//sortBoxes[2].randomize();
 	}
 	
-	public void setElementNum(int elementNum) {
-		this.elementNum = elementNum;
-		needResize = true;
-		for(int i=0; i<6; i++) {
-			sortBoxes[i].saveResize(elementNum); 
-		}
-	}
+	public void setElementNum(int elementNum) { this.elementNum = elementNum; }
 	
-	public void resizeBoxes() {
-		if(needResize) {
-			//TODO implement resizing
-			needResize = false;
-		} else
-			return; // i guess?
+	public void resetBoxes() {
+		for(int i=0; i<6; i++) {
+			sortBoxes[i].reset(elementNum);
+		}
 	}
 	
 	public void notifySwap(int a, int b) {
@@ -62,6 +53,7 @@ class SortBox extends JPanel {
 	private int elementNum;
 	private double inter;
 	int[] buffer = {-1, -1};
+	Color[] bufferColor = new Color[2];
 	JPanel[] array = new JPanel[SettingsPanel.maxElement];
 	GridBagLayout g = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
@@ -70,30 +62,29 @@ class SortBox extends JPanel {
 		this.elementNum = elementNum;
 		this.inter = SortPanel.panelSize / elementNum;
 		
+		//create layout
 		setLayout(g);
 		c.weighty = 2.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		
+		//create color for all possible labels
 		int color = 0;
 		for(int i=0; i<SettingsPanel.maxElement; i++) {
 			array[i] = new JPanel();
-			array[i].setBackground(Color.decode("#" + Integer.toHexString(color += 1500000).toUpperCase()));
+			//array[i].setBackground(Color.decode("#" + Integer.toHexString(color += 1500000).toUpperCase()));
+			array[i].setBackground(Color.BLACK);
 		}
 		
-		for(int i=0; i<elementNum; i++) {
-			g.setConstraints(array[i], c);
-			array[i].setPreferredSize(new Dimension((int)(inter * (i+1)), (int)inter));
-			array[i].setMaximumSize(new Dimension((int)(inter * (i+1)), (int)inter));
-			add(array[i]);
-		}
+		initializeBox();
 	}
 	
-	public void saveResize (int elementNum) {
+	public void reset (int elementNum) {
 		this.elementNum = elementNum;
 		this.inter = SortPanel.panelSize / elementNum;
+		initializeBox();
 	}
 	
-	/*
+	private void initializeBox () {
 		removeAll();
 		for(int i=0; i<elementNum; i++) {
 			g.setConstraints(array[i], c);
@@ -102,29 +93,33 @@ class SortBox extends JPanel {
 			add(array[i]);
 		}
 		revalidate(); repaint();
-	*/
+	}
 	
 	public void bufferSwap (int elementIndex) {
-		array[elementIndex].setBackground(Color.RED);
+		if(elementIndex == -1) System.out.println("flag2");
 		
-		if(buffer[0] == -1)
+		if(buffer[0] == -1) {
+			bufferColor[0] = array[elementIndex].getBackground();
+			array[elementIndex].setBackground(Color.RED);
 			buffer[0] = elementIndex;
-		else
+		}
+		else {
+			bufferColor[1] = array[elementIndex].getBackground();
+			array[elementIndex].setBackground(Color.RED);
 			buffer[1] = elementIndex;
+		}
 	}
 	
 	public void swap () {
 		Dimension aDim = array[buffer[0]].getSize();
 		Dimension bDim = array[buffer[1]].getSize();
-		Color aColor = array[buffer[0]].getBackground();
-		Color bColor = array[buffer[1]].getBackground();
 		
 		array[buffer[0]].setPreferredSize(bDim);
 		array[buffer[0]].setMaximumSize(bDim);
-		array[buffer[0]].setBackground(bColor);
+		array[buffer[0]].setBackground(bufferColor[1]);
 		array[buffer[1]].setPreferredSize(aDim);
 		array[buffer[1]].setMaximumSize(aDim);
-		array[buffer[1]].setBackground(aColor);
+		array[buffer[1]].setBackground(bufferColor[0]);
 		revalidate(); repaint();
 		
 		buffer[0] = buffer[1] = -1;
