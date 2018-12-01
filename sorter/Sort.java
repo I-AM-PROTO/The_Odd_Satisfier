@@ -3,82 +3,77 @@ package sorter;
 import java.util.Vector;
 
 public class Sort {
-	private int vectorSize;
-	private Vector<Integer>[] vectorArr = new Vector[6];
-	MainFrame mainFrame = new MainFrame();
+	protected Vector<Integer> v;
+	protected int size;
+	protected int[] candidate = {-1, -1};
+	protected boolean isSorted = false;
 	
-	public Sort () {
-		this.vectorSize = SortPanel.INITIAL_ELEMENT_NUM;
-		for(int i=0; i<6; i++)
-			vectorArr[i] = new Vector<Integer>();
-		initializeVector();
-	}
+	public Sort(Vector<Integer> v, int size) {this.v = v; this.size = size;}
 	
-	private void initializeVector() {
-		resetVectors();
-		for(int i=0; i<vectorSize; i++)
-			vectorArr[0].add(i);
-		shuffleVector();
-		copyVectors();
-	}
+	public void takeAStep() {}
 	
-	public void resetVectors() {
-		for(int i=0; i<6; i++)
-			vectorArr[i].removeAllElements();
-	}
+	public int getCandidate(int index) { return candidate[index]; } 
 	
-	public void copyVectors() {
-		for(int i=1; i<6; i++)
-			vectorArr[i] = (Vector<Integer>)vectorArr[0].clone();
-	}
-	
-	public void printVector(int index) {
-		for(int i=0; i<vectorSize; i++)
-			System.out.print(vectorArr[index].get(i) + " " + (i % 5 == 4 ? '\n' : ' '));
+	public void printVector() {
+		for(int i=0; i<size; i++)
+			System.out.print(v.get(i) + " " + (i % 5 == 4 ? '\n' : ' '));
 		System.out.println();
 		System.out.println();
 		System.out.println();
 	}
 	
-	private void shuffleVector() {
-		int a, b;
-		for(int i=0; i<vectorSize*4; i++) {
-			a = (int)(Math.random()*vectorSize);
-			b = (int)(Math.random()*vectorSize);
-			if(a != b) {
-				swapVector(a, b);
-				mainFrame.notifySwap(a, b);
-				interval(50);
+	protected void swap(int a, int b) {
+		int aElement = v.get(a);
+		int bElement = v.get(b);
+		v.setElementAt(bElement, a);
+		v.setElementAt(aElement, b);
+	}
+	
+	public boolean isSorted() { return isSorted; }
+}
+
+class BubbleSort extends Sort {
+	private int i = size - 1, j = 0;
+	public BubbleSort(Vector<Integer> v, int size) { super(v, size);}
+	
+	public void takeAStep() {
+		for(; i>0; i--) {
+			for(; j<i; j++) {
+				if(v.get(j) > v.get(j+1)) {
+					candidate[0] = j;
+					candidate[1] = j+1;
+					swap(j, j+1);
+					if(candidate[0] == -1) System.out.println("flag1");
+					return;
+				}
 			}
+			j = 0;
 		}
+		
+		//if managed to exit two loops
+		isSorted = true;
+		return;
 	}
 	
-	private void swapVector(int a, int b) {
-		int aElement = vectorArr[0].get(a);
-		int bElement = vectorArr[0].get(b);
-		vectorArr[0].setElementAt(bElement, a);
-		vectorArr[0].setElementAt(aElement, b);
-	}
-	
-	void interval() {
-		try {
-			Thread.sleep(500);//fix
-		} catch(InterruptedException e) {
-			System.out.println(e.getMessage());
+}
+
+class SelectionSort extends Sort {
+	private int i = 0, j = 0;
+	public SelectionSort(Vector<Integer> v, int size) { super(v, size); }
+
+	public void takeAStep() {
+		int min = i;
+		for(j=i; j<size; j++) {
+			if(v.get(min) > v.get(j))
+				min = j;
 		}
-	}
-	
-	void interval(int time) {
-		try {
-			Thread.sleep(time);	
-		} catch(InterruptedException e) {
-			System.out.println(e.getMessage());
-		}
-	}
-	
-	public static void main (String[] args) {
-		Sort sort = new Sort();
-		for(int i=0; i<6; i++)
-			sort.printVector(i);
+		
+		candidate[0] = i;
+		candidate[1] = min;
+		swap(i, min);
+		i++;
+		
+		if(i == size-1)
+			isSorted = true;
 	}
 }
