@@ -12,7 +12,6 @@ public class Main {
 	MainFrame mainFrame = new MainFrame();
 
 	public Main () {}
-
 	private void run() {
 		while(true) {
 			mainFrame.reset(); // reset Frame
@@ -24,22 +23,41 @@ public class Main {
 
 	private void runSorting() {
 		for(int i=0; i<6; i++) {
-			sorter[i] = new BubbleSort((Vector<Integer>)origin.clone(), vectorSize);
+			sorter[i] = SortFactory.createSorter((Vector<Integer>)origin.clone(), vectorSize, 2);
 			//make sort factory that gives vector,size,mode as input and gives sorter as output
 		}
 		//then repeat (getting step -> swapping) until all vectors are sorted
 		//don't forget to get new speed
-		while(!sorter[0].isSorted()) {
-			sorter[0].takeAStep();
-			mainFrame.bufferSwap(sorter[0].getCandidate(0), 0);
-			interval(40);
-			mainFrame.bufferSwap(sorter[0].getCandidate(1), 0);
-			interval(40);
-			mainFrame.notifySwap(0);
-		}
 		
-		sorter[0].printVector();
+		while(!allSorted()) {
+			for(int i=0; i<6; i++) {
+				if(sorter[i].isSorted()) continue;	
+				sorter[i].takeAStep();
+			}
+			for(int i=0; i<6; i++) {
+				if(sorter[i].isSorted()) continue;	
+				mainFrame.bufferSwap(sorter[i].getCandidate(0), i);
+			}
+			interval(40);
+			for(int i=0; i<6; i++) {
+				if(sorter[i].isSorted()) continue;
+				mainFrame.bufferSwap(sorter[i].getCandidate(1), i);
+			}
+			interval(40);
+			for(int i=0; i<6; i++) {
+				if(sorter[i].isSorted()) continue;
+				mainFrame.notifySwap(i);
+			}
+			
+			//check every 10iters if there's something off
+		}
+	}
 
+	private boolean allSorted() {
+		for(int i=0; i<6; i++)
+			if(!sorter[i].isSorted())
+				return false;
+		return true;
 	}
 	
 	private void initializeVector() {
