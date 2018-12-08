@@ -17,16 +17,16 @@ public class Main {
 			mainFrame.reset(); // reset Frame
 			initializeVector(); // initialize/reset vectors
 			runSorting();
-			interval(10000);
+			interval(1000);
 		}
 	}
 
 	private void runSorting() {
+		int cnt = 0;
 		for(int i=0; i<6; i++) {
-			sorter[i] = SortFactory.createSorter((Vector<Integer>)origin.clone(), vectorSize, 2);
-			//make sort factory that gives vector,size,mode as input and gives sorter as output
+			sorter[i] = SortFactory.createSorter((Vector<Integer>)origin.clone(), vectorSize, i);
 		}
-		//then repeat (getting step -> swapping) until all vectors are sorted
+		recalibrate();
 		//don't forget to get new speed
 		
 		while(!allSorted()) {
@@ -49,14 +49,24 @@ public class Main {
 				mainFrame.notifySwap(i);
 			}
 			
-			//check every 10iters if there's something off
+			if(cnt++ % 10 == 0);
+				recalibrate();
 		}
+		recalibrate();
+		sorter[0].printVector();
 	}
 
-	private boolean allSorted() {
+	private void recalibrate() {
 		for(int i=0; i<6; i++)
+			mainFrame.recalibrate(i, sorter[i].getVector());
+	}
+	
+	private boolean allSorted() {
+		for(int i=0; i<6; i++) {
+			//System.out.print(sorter[i].isSorted + (i==5?" ":"\n"));
 			if(!sorter[i].isSorted())
 				return false;
+		}
 		return true;
 	}
 	
@@ -83,7 +93,7 @@ public class Main {
 			if(a != b) {
 				swapVector(a, b);
 				mainFrame.notifySwap(a, b);
-				interval(50);
+				interval(10);
 			}
 		}
 	}
