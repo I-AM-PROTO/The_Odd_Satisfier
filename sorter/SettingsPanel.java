@@ -69,7 +69,7 @@ public class SettingsPanel extends JPanel {
 			g.setConstraints(ghostLabel[i], newLine);
 		}
 		
-		JLabel numLabel = new JLabel("[Mode]", SwingConstants.CENTER);
+		JLabel numLabel = new JLabel("[Color Preset]", SwingConstants.CENTER);
 		numLabel.setFont(new Font(numLabel.getFont().getFontName(), Font.PLAIN, 18));
 		g.setConstraints(numLabel, newLine);
 		center.add(numLabel);
@@ -86,7 +86,7 @@ public class SettingsPanel extends JPanel {
 				}
 			});
 		}
-		sortNumSetting[2].setSelected(true);
+		sortNumSetting[0].setSelected(true);
 
 		center.add(ghostLabel[0]);
 

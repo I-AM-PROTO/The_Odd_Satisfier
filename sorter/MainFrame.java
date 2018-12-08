@@ -3,6 +3,7 @@ package sorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -39,4 +40,5 @@ public class MainFrame extends JFrame {
 	public void notifySwap(int a, int b) { sortPanel.notifySwap(a, b); } //vector shuffle
 	public void bufferSwap(int a, int index) { sortPanel.bufferSwap(a, index); } //buffer swap elements mid-sort
 	public void notifySwap(int index) { sortPanel.notifySwap(index); } //swap buffered elements
+	public void recalibrate(int index, Vector<Integer> v) { sortPanel.recalibrate(index, v); }
 }

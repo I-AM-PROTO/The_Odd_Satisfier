@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -15,7 +16,7 @@ import javax.swing.border.Border;
 class SortPanel extends JPanel {
 	public static final int panelSize = 245;
 	SortBox[] sortBoxes = new SortBox[6];
-	public static final int INITIAL_ELEMENT_NUM = 60;
+	public static final int INITIAL_ELEMENT_NUM = 120;
 	private int elementNum = INITIAL_ELEMENT_NUM;
 	
 	public SortPanel() {
@@ -47,6 +48,7 @@ class SortPanel extends JPanel {
 	
 	public void bufferSwap(int a, int index) { sortBoxes[index].bufferSwap(a); }
 	public void notifySwap(int index) { sortBoxes[index].swap(); }
+	public void recalibrate(int index, Vector<Integer> v) { sortBoxes[index].recalibrate(v); }
 }
 
 class SortBox extends JPanel {
@@ -88,8 +90,8 @@ class SortBox extends JPanel {
 		removeAll();
 		for(int i=0; i<elementNum; i++) {
 			g.setConstraints(array[i], c);
-			array[i].setPreferredSize(new Dimension((int)(inter * i), (int)inter));
-			array[i].setMaximumSize(new Dimension((int)(inter * i), (int)inter));
+			array[i].setPreferredSize(new Dimension((int)(inter * (i + 1)), (int)inter));
+			array[i].setMaximumSize(new Dimension((int)(inter * (i + 1)), (int)inter));
 			add(array[i]);
 		}
 		revalidate(); repaint();
@@ -140,6 +142,16 @@ class SortBox extends JPanel {
 		revalidate(); repaint();
 	}
 	
+	public void recalibrate(Vector<Integer> v) {
+		for(int i=0; i<elementNum; i++) {
+			if(inter * (v.get(i) + 1) != array[i].getWidth()) {
+				//array[i].setBackground(Color.PINK);
+				array[i].setPreferredSize(new Dimension((int)(inter * (v.get(i) + 1)), (int)inter));
+				array[i].setMaximumSize(new Dimension((int)(inter * (v.get(i) + 1)), (int)inter));
+			}
+		}
+		revalidate(); repaint();
+	}
 }
 
 /*
