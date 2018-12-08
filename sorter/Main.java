@@ -4,58 +4,112 @@ import java.util.Vector;
 
 public class Main {
 	private int vectorSize = SortPanel.INITIAL_ELEMENT_NUM;
-	private final int defaultInterval = 500;
+	private int newVectorSize = SortPanel.INITIAL_ELEMENT_NUM;
+	private final int defaultInterval = 120;
 	private int sortSpeed = SettingsPanel.DEFAULT_SORT_SPEED;
-	private long sortInterval;
+	private int sortInterval = defaultInterval / sortSpeed;
 	private Vector<Integer> origin = new Vector<>(SettingsPanel.maxElement);
+	private int[] sortChoice = new int[6];
 	private Sort[] sorter = new Sort[6];
 	MainFrame mainFrame = new MainFrame();
 
 	public Main () {}
+	
 	private void run() {
 		while(true) {
-			mainFrame.reset(); // reset Frame
+			initialPauseSession();
+			interval(1000);
+			vectorSize = newVectorSize;
+			mainFrame.rebuild(); // rebuild Frame
+			sortChoice = mainFrame.getSortChoice();
 			initializeVector(); // initialize/reset vectors
 			runSorting();
-			interval(1000);
 		}
 	}
 
 	private void runSorting() {
 		int cnt = 0;
 		for(int i=0; i<6; i++) {
-			sorter[i] = SortFactory.createSorter((Vector<Integer>)origin.clone(), vectorSize, i);
+			sorter[i] = SortFactory.createSorter((Vector<Integer>)origin.clone(), vectorSize, sortChoice[i]);
 		}
-		recalibrate();
-		//don't forget to get new speed
+		recalibrate();		
 		
 		while(!allSorted()) {
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;	
 				sorter[i].takeAStep();
 			}
+			interval(sortInterval);
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;	
 				mainFrame.bufferSwap(sorter[i].getCandidate(0), i);
 			}
-			interval(40);
+			interval(sortInterval);
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;
 				mainFrame.bufferSwap(sorter[i].getCandidate(1), i);
 			}
-			interval(40);
+			interval(sortInterval);
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;
 				mainFrame.notifySwap(i);
 			}
+			interval(sortInterval);
 			
-			if(cnt++ % 10 == 0);
+			if(cnt++ % 5 == 0)
 				recalibrate();
+			
+			if(mainFrame.paused)
+				pauseSession();
+			getNewSettings();
 		}
 		recalibrate();
-		sorter[0].printVector();
+	}
+	
+	private void getNewSettings() {
+		if(mainFrame.newColorPreset) {
+			mainFrame.getColorPreset();
+			interval(200);
+		}
+		if(mainFrame.newSortSpeed) {
+			sortSpeed = mainFrame.getSortSpeed();
+			sortInterval = defaultInterval / sortSpeed;
+		}
+		if(mainFrame.newElementNum) {
+			newVectorSize = mainFrame.getElementNum();
+		}
+	}
+	
+	private void getInitialSettings() {
+		if(mainFrame.newColorPreset) {
+			mainFrame.getColorPreset();
+			mainFrame.rebuild();
+			interval(200);
+		}
+		if(mainFrame.newSortSpeed) {
+			sortSpeed = mainFrame.getSortSpeed();
+			sortInterval = defaultInterval / sortSpeed;
+		}
+		if(mainFrame.newElementNum) {
+			mainFrame.rebuild();
+			newVectorSize = mainFrame.getElementNum();
+		}
 	}
 
+	private void pauseSession() {
+		while(mainFrame.paused) {
+			interval(50);
+			getNewSettings();
+		}
+	}
+	
+	private void initialPauseSession() {
+		while(mainFrame.paused) {
+			interval(50);
+			getInitialSettings();
+		}
+	}
+	
 	private void recalibrate() {
 		for(int i=0; i<6; i++)
 			mainFrame.recalibrate(i, sorter[i].getVector());
@@ -87,13 +141,17 @@ public class Main {
 
 	private void shuffleVector() {
 		int a, b;
-		for(int i=0; i<vectorSize; i++) { // *3 omitted
+		for(int i=0; i<vectorSize*3; i++) {
 			a = (int)(Math.random()*vectorSize);
 			b = (int)(Math.random()*vectorSize);
 			if(a != b) {
 				swapVector(a, b);
 				mainFrame.notifySwap(a, b);
 				interval(10);
+			}
+			if(mainFrame.newColorPreset) {
+				mainFrame.getColorPreset();
+				interval(50);
 			}
 		}
 	}
@@ -103,14 +161,6 @@ public class Main {
 		int bElement = origin.get(b);
 		origin.setElementAt(bElement, a);
 		origin.setElementAt(aElement, b);
-	}
-
-	private void interval() {
-		try {
-			Thread.sleep(500);//fix
-		} catch(InterruptedException e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
 	private void interval(int time) {

@@ -15,9 +15,9 @@ import javax.swing.border.Border;
 
 class SortPanel extends JPanel {
 	public static final int panelSize = 245;
-	SortBox[] sortBoxes = new SortBox[6];
-	public static final int INITIAL_ELEMENT_NUM = 120;
+	public static final int INITIAL_ELEMENT_NUM = 60;
 	private int elementNum = INITIAL_ELEMENT_NUM;
+	SortBox[] sortBoxes = new SortBox[6];
 	
 	public SortPanel() {
 		setLayout(new GridLayout(2,3,5,5));
@@ -33,8 +33,6 @@ class SortPanel extends JPanel {
 		//sortBoxes[2].randomize();
 	}
 	
-	public void setElementNum(int elementNum) { this.elementNum = elementNum; }
-	
 	public void resetBoxes() {
 		for(int i=0; i<6; i++) {
 			sortBoxes[i].reset(elementNum);
@@ -46,6 +44,12 @@ class SortPanel extends JPanel {
 			sortBoxes[i].swap(a, b);
 	}
 	
+	public void setColorPreset(int mode) {
+		for(int i=0; i<6; i++)
+			sortBoxes[i].setColorPreset(mode);
+	}
+	
+	public void setElementNum(int elementNum) { this.elementNum = elementNum; }
 	public void bufferSwap(int a, int index) { sortBoxes[index].bufferSwap(a); }
 	public void notifySwap(int index) { sortBoxes[index].swap(); }
 	public void recalibrate(int index, Vector<Integer> v) { sortBoxes[index].recalibrate(v); }
@@ -54,6 +58,7 @@ class SortPanel extends JPanel {
 class SortBox extends JPanel {
 	private int elementNum;
 	private double inter;
+	
 	int[] buffer = {-1, -1};
 	Color[] bufferColor = new Color[2];
 	JPanel[] array = new JPanel[SettingsPanel.maxElement];
@@ -69,14 +74,11 @@ class SortBox extends JPanel {
 		c.weighty = 2.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		
-		//create color for all possible labels
-		int color = 0;
 		for(int i=0; i<SettingsPanel.maxElement; i++) {
 			array[i] = new JPanel();
-			//array[i].setBackground(Color.decode("#" + Integer.toHexString(color += 1500000).toUpperCase()));
-			array[i].setBackground(Color.BLACK);
 		}
 		
+		setColorPreset(SettingsPanel.DEFAULT_COLOR_PRESET);
 		initializeBox();
 	}
 	
@@ -145,65 +147,41 @@ class SortBox extends JPanel {
 	public void recalibrate(Vector<Integer> v) {
 		for(int i=0; i<elementNum; i++) {
 			if(inter * (v.get(i) + 1) != array[i].getWidth()) {
-				//array[i].setBackground(Color.PINK);
 				array[i].setPreferredSize(new Dimension((int)(inter * (v.get(i) + 1)), (int)inter));
 				array[i].setMaximumSize(new Dimension((int)(inter * (v.get(i) + 1)), (int)inter));
 			}
 		}
 		revalidate(); repaint();
 	}
-}
-
-/*
-class SortBox extends JPanel {
-	private int elementNum;
-	JPanel[] array = new JPanel[SettingsPanel.maxElement];
 	
-	public SortBox (int elementNum) {
-		this.elementNum = elementNum;
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		int j = Integer.parseInt("FFFFFF", 16) / elementNum;
-		int color = 0;
-		double inter = SortPanel.panelSize / elementNum;
-		for(int i=0; i<SettingsPanel.maxElement; i++)
-			array[i] = new JPanel();
-		
-		for(int i=0; i<elementNum; i++) {
-			array[i].setPreferredSize(new Dimension((int)(inter * i), (int)inter));
-			array[i].setMaximumSize(new Dimension((int)(inter * i), (int)inter));
-			array[i].setBackground(Color.decode("#" + Integer.toHexString(color += 1500000).toUpperCase()));
-			add(array[i]);
+	public void setColorPreset(int mode) {
+		switch(mode) {
+		case 1:{
+			bufferColor[0] = bufferColor[1] = Color.BLACK;
+			for(int i=0; i<SettingsPanel.maxElement; i++) {
+				array[i].setBackground(Color.BLACK);
+			}
+			break;
 		}
-	}
-	
-	public void randomize () {
-		int width;
-		for(int i=0; i<elementNum; i++) {
-			width = (int)(Math.random()*240);
-			array[i].setPreferredSize(new Dimension(width, 3));
-			array[i].setMaximumSize(new Dimension(width, 3));
-			array[i].setBackground(Color.WHITE);
-			add(array[i]);
+		case 2:{
+			bufferColor[0] = buffer[0] % 2 == 1 ? Color.PINK : Color.RED;
+			bufferColor[1] = buffer[1] % 2 == 1 ? Color.PINK : Color.RED;
+			for(int i=0; i<SettingsPanel.maxElement; i++) {
+				array[i].setBackground((array[i].getWidth() / inter) % 2 == 1 ? Color.PINK : Color.RED);
+			}
+			break;
 		}
-		array[20].setBackground(Color.RED);
-		array[34].setBackground(Color.RED);
-		revalidate(); repaint();
-	}
-	
-	public void resize (int elementNum) {
-		this.elementNum = elementNum;
-		
-		removeAll();
-		int j = Integer.parseInt("FFFFFF", 16) / elementNum;
-		int color = 0;
-		int inter = SortPanel.panelSize / elementNum;
-		for(int i=0; i<elementNum; i++) {
-			array[i].setPreferredSize(new Dimension(inter * i, inter));
-			array[i].setMaximumSize(new Dimension(inter * i, inter));
-			array[i].setBackground(Color.decode("#" + Integer.toHexString(color += 1500000).toUpperCase()));
-			add(array[i]);
+		case 3:{
+			for(int i=0; i<SettingsPanel.maxElement; i++) {
+				array[i].setBackground(Color.YELLOW);
+			}
+			break;
 		}
-		revalidate(); repaint();
+		case 4:{
+			for(int i=0; i<SettingsPanel.maxElement; i++) {
+				array[i].setBackground(Color.decode("#" + Integer.toHexString((int)(Math.random()*(Integer.parseInt("FFFFFF", 16)))+1).toUpperCase()));
+			}
+		}
+		}
 	}
 }
-*/
