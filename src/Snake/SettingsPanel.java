@@ -36,6 +36,11 @@ class SettingsPanel extends JPanel {
 		b3 = new JButton("GitHub");
 		b4 = new JButton("Back To Menu");
 		b5 = new JButton("Exit");
+		b1.setFocusable(false);
+		b2.setFocusable(false);
+		b3.setFocusable(false);
+		b4.setFocusable(false);
+		b5.setFocusable(false);
 		b1.setPreferredSize(d);
 		b2.setPreferredSize(d);
 		b3.setPreferredSize(d);
