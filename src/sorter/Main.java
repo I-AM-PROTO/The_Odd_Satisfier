@@ -2,6 +2,8 @@ package sorter;
 
 import java.util.Vector;
 
+import main_hub.MainHubFrame;
+
 public class Main {
 	private int vectorSize = SortPanel.INITIAL_ELEMENT_NUM;
 	private int newVectorSize = SortPanel.INITIAL_ELEMENT_NUM;
@@ -11,20 +13,22 @@ public class Main {
 	private Vector<Integer> origin = new Vector<>(SettingsPanel.maxElement);
 	private int[] sortChoice = new int[6];
 	private Sort[] sorter = new Sort[6];
-	MainFrame mainFrame = new MainFrame();
+	private MainFrame mainFrame = new MainFrame();
+	private MainHubFrame mhf;
 
-	public Main () {}
-	
-	private void run() {
+	public Main (MainHubFrame mhf) {this.mhf = mhf;}
+
+	public void run() {
 		while(true) {
+			if(interval(1000)) break;
 			initialPauseSession();
-			interval(1000);
 			vectorSize = newVectorSize;
 			mainFrame.rebuild(); // rebuild Frame
 			sortChoice = mainFrame.getSortChoice();
 			initializeVector(); // initialize/reset vectors
 			runSorting();
 		}
+		mhf.reEnter();
 	}
 
 	private void runSorting() {
@@ -39,22 +43,22 @@ public class Main {
 				if(sorter[i].isSorted()) continue;	
 				sorter[i].takeAStep();
 			}
-			interval(sortInterval);
+			if(interval(sortInterval)) break;
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;	
 				mainFrame.bufferSwap(sorter[i].getCandidate(0), i);
 			}
-			interval(sortInterval);
+			if(interval(sortInterval)) break;
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;
 				mainFrame.bufferSwap(sorter[i].getCandidate(1), i);
 			}
-			interval(sortInterval);
+			if(interval(sortInterval)) break;
 			for(int i=0; i<6; i++) {
 				if(sorter[i].isSorted()) continue;
 				mainFrame.notifySwap(i);
 			}
-			interval(sortInterval);
+			if(interval(sortInterval)) break;
 			
 			if(cnt++ % 5 == 0)
 				recalibrate();
@@ -98,14 +102,14 @@ public class Main {
 
 	private void pauseSession() {
 		while(mainFrame.paused) {
-			interval(50);
+			if(interval(50)) break;
 			getNewSettings();
 		}
 	}
 	
 	private void initialPauseSession() {
 		while(mainFrame.paused) {
-			interval(50);
+			if(interval(50)) break;
 			getInitialSettings();
 		}
 	}
@@ -141,13 +145,13 @@ public class Main {
 
 	private void shuffleVector() {
 		int a, b;
-		for(int i=0; i<vectorSize*3; i++) {
+		for(int i=0; i<vectorSize*2; i++) {
 			a = (int)(Math.random()*vectorSize);
 			b = (int)(Math.random()*vectorSize);
 			if(a != b) {
 				swapVector(a, b);
 				mainFrame.notifySwap(a, b);
-				interval(10);
+				if(interval(10)) break;
 			}
 			if(mainFrame.newColorPreset) {
 				mainFrame.getColorPreset();
@@ -163,16 +167,16 @@ public class Main {
 		origin.setElementAt(aElement, b);
 	}
 
-	private void interval(int time) {
-		try {
-			Thread.sleep(time);	
-		} catch(InterruptedException e) {
-			System.out.println(e.getMessage());
+	private boolean interval(int time) {
+		for(int i=0; i<time; i++) {
+			try {
+				Thread.sleep(1);	
+			} catch(InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
+			if(mainFrame.getTerminate())
+				return true;
 		}
-	}
-
-	public static void main (String[] args) {
-		Main sort = new Main();
-		sort.run();
+		return false;
 	}
 }

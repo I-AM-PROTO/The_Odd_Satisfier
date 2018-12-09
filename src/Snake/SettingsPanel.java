@@ -7,9 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Dictionary;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -19,7 +17,6 @@ import javax.swing.event.ChangeListener;
 import java.net.*;
 
 class SettingsPanel extends JPanel {
-	private Dictionary<Integer, String> tickdict;
 	private MainFrame mainFrame;
 	private Dimension d;
 	private JButton b1, b2, b3, b4, b5;
@@ -36,7 +33,7 @@ class SettingsPanel extends JPanel {
 		btnPanel.setLayout(new GridLayout(2, 2));
 		b1 = new JButton("Pause (P)");
 		b2 = new JButton("Replay");
-		b3 = new JButton("Github");
+		b3 = new JButton("GitHub");
 		b4 = new JButton("Back To Menu");
 		b5 = new JButton("Exit");
 		b1.setPreferredSize(d);
@@ -94,7 +91,13 @@ class SettingsPanel extends JPanel {
 			}
 		});
 		
-		//b4
+		b4.addActionListener(new ActionListener () {
+			public void actionPerformed (ActionEvent e) {
+				mainFrame.terminateGame();
+				mainFrame.dispose();
+				
+			}
+		});
 		
 		b5.addActionListener(new ActionListener () {
 			public void actionPerformed (ActionEvent e) {

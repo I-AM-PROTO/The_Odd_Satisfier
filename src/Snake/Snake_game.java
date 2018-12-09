@@ -1,7 +1,8 @@
 package Snake;
-import java.util.Scanner;
+
 import Snake.Direction;
 import Snake.BlockType;
+import main_hub.MainHubFrame;
 
 public class Snake_game {
 	final private double defaultInterval = 1000;
@@ -13,6 +14,25 @@ public class Snake_game {
 	private Block head, tail;
 	private boolean gameResult; //true = win , false = lose
 	private MainFrame mainFrame;
+	private MainHubFrame mhf;
+
+	//get settings, create board, put head in center, direction right
+	public Snake_game(int gameHeight, int gameWidth, MainHubFrame mhf) {
+		this.mhf = mhf;
+		this.inGameInterval = (long)(defaultInterval / defaultSpeed);
+		this.gameWidth = gameWidth;
+		this.gameHeight = gameHeight;
+		this.snakeLen = 2; // 1head + 1body
+		this.growthLen = 0;
+		this.goalLen = gameHeight * gameWidth;
+		this.mainFrame = new MainFrame(this, defaultSpeed, gameHeight+2, gameWidth+2);
+
+		gameBoard = new Snake_gameboard(gameHeight, gameWidth);
+		head = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2);
+		tail = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2 - 1);
+
+		createApple();
+	}
 
 	private void setBodyID() {
 		Block pastBlock = tail, currBlock = getNextBlock(tail);
@@ -142,23 +162,6 @@ public class Snake_game {
 			System.out.println(e.getMessage());
 		}
 	}
-
-	//get settings, create board, put head in center, direction right
-	public Snake_game(int gameHeight, int gameWidth) {
-		this.inGameInterval = (long)(defaultInterval / defaultSpeed);
-		this.gameWidth = gameWidth;
-		this.gameHeight = gameHeight;
-		this.snakeLen = 2; // 1head + 1body
-		this.growthLen = 0;
-		this.goalLen = gameHeight * gameWidth;
-		this.mainFrame = new MainFrame(this, defaultSpeed, gameHeight+2, gameWidth+2);
-
-		gameBoard = new Snake_gameboard(gameHeight, gameWidth);
-		head = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2);
-		tail = gameBoard.getBlock((gameHeight+1)/2, (gameWidth+1)/2 - 1);
-
-		createApple();
-	}
 	
 	public void setSpeed(int speed) { inGameInterval = (long)(defaultInterval / speed); }
 	
@@ -206,6 +209,10 @@ public class Snake_game {
 				resetGame();
 				continue;
 			}
+			
+			if(mainFrame.getTerminate()) {
+				break;
+			}
 
 			if(!moveSnakeAndCheck()) {
 				if(gameResult) {
@@ -218,6 +225,7 @@ public class Snake_game {
 				resetGame();
 			}
 		}
+		mhf.reEnter();
 	}
 	
 	protected void autoRun() {
@@ -232,16 +240,15 @@ public class Snake_game {
 				resetGame();
 				continue;
 			}
+			
+			if(mainFrame.getTerminate()) {
+				break;
+			}
 
 			if(!moveSnakeAndCheck()) {
-				System.out.println("ayy");
 				return;
 			}
 		}
-	}
-
-	public static void main (String[] args) {
-		Snake_game game = new Snake_game(14, 14);
-		game.run();
+		mhf.reEnter();
 	}
 }

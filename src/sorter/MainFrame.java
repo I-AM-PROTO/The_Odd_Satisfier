@@ -1,29 +1,25 @@
 package sorter;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 
 public class MainFrame extends JFrame {
 	private SortPanel sortPanel = new SortPanel();
-	private SettingsPanel settingsPanel = new SettingsPanel(this);
+	private SettingsPanel settingsPanel;
 	public boolean newColorPreset = false;
 	public boolean newSortSpeed = false;
 	public boolean newElementNum = false;
 	public boolean paused = true;
+	private boolean terminate = false;
 	private int colorPreset = SettingsPanel.DEFAULT_COLOR_PRESET;
 	private int sortSpeed = SettingsPanel.DEFAULT_SORT_SPEED;
 	private int elementNum = SortPanel.INITIAL_ELEMENT_NUM;
 	
 	public MainFrame() {
-		setTitle("SORT");
+		settingsPanel = new SettingsPanel(this);
+		setTitle("sortingvirus.exe");
 		setSize((SortPanel.panelSize + 5) * 3 + 350, 500 + 40);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("./res/bup.jpg"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,10 +28,6 @@ public class MainFrame extends JFrame {
 		add(sortPanel, BorderLayout.WEST);
 		add(settingsPanel, BorderLayout.CENTER);
 		setVisible(true);
-	}
-	
-	public static void main (String[] args) {
-		MainFrame mf = new MainFrame();
 	}
 	
 	public void rebuild() {
@@ -54,4 +46,6 @@ public class MainFrame extends JFrame {
 	public int getElementNum() { newElementNum = false; sortPanel.setElementNum(elementNum); return elementNum; }
 	public void pause() { paused = !paused; }
 	public int[] getSortChoice() { return settingsPanel.getSortChoice(); }
+	public void terminateSim() { terminate = true; }
+	public boolean getTerminate() { return terminate; }
 }
