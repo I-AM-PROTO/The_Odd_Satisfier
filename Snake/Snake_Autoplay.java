@@ -1,12 +1,14 @@
 package Snake;
 
+import main_hub.MainHubFrame;
+
 public class Snake_Autoplay extends Snake_game {
 	private Block head;
 	private int gameWidth, gameHeight;
 	private int mode;
 	private boolean cntr;
 	
-	public Snake_Autoplay () { super(4, 4); }
+	public Snake_Autoplay (MainHubFrame mhf) { super(4, 4, mhf); }
 
 	public void getRandomSize () {
 		gameHeight = (int)(Math.random() * 8) + 3;
@@ -175,10 +177,5 @@ public class Snake_Autoplay extends Snake_game {
 		}
 		
 		return Direction.NULL;
-	}
-
-	public static void main (String[] args) {
-		Snake_Autoplay game = new Snake_Autoplay();
-		game.runAutoPlay();
 	}
 }

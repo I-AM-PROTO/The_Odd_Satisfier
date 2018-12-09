@@ -1,33 +1,34 @@
 package Snake;
 import Snake.Direction;
-import Snake.BlockType;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.event.*;
-import java.util.*;
 
 class MainFrame extends JFrame {
-	Snake_game snakeGame;
-	GameboardPanel gameboardPanel;
-	SettingsPanel settingsPanel;
+	private Snake_game snakeGame;
+	private GameboardPanel gameboardPanel;
+	private SettingsPanel settingsPanel;
 	private Direction inputDir;
 	private int speed;
 	private boolean pause = false;
 	private boolean replay = false;
-	
+	private boolean terminate = false;
+
 	public MainFrame (Snake_game snakeGame, int speed, int gameHeight, int gameWidth) {
 		this.snakeGame = snakeGame;
 		this.speed = speed;
 		this.inputDir = Direction.NULL;
 		setSize((gameWidth)*55 + 240, (gameHeight)*52 + 40);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("snakevirus.exe");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("./res/bup.jpg"));
 		
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
 		gameboardPanel = new GameboardPanel(gameHeight, gameWidth);
 		settingsPanel = new SettingsPanel(this);
+		
 		container.add(settingsPanel, BorderLayout.EAST);
 		container.add(gameboardPanel, BorderLayout.CENTER);
 		
@@ -62,9 +63,9 @@ class MainFrame extends JFrame {
 					inputDir = Direction.NULL;
 			}
 		});
-
 		setVisible(true);
 		setResizable(false);
+		setEnabled(true);
 		this.setFocusable(true);
 	    this.requestFocus();
 	}
@@ -93,4 +94,6 @@ class MainFrame extends JFrame {
 	public boolean getReplay() { return replay; }
 	public void flipReplay() { replay = !replay; }
 	public void setSpeed(int speed) { snakeGame.setSpeed(speed); }
+	public void terminateGame() { terminate = true; }
+	public boolean getTerminate() { return terminate; }
 }

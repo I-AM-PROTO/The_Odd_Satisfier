@@ -9,8 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -30,7 +28,7 @@ public class SettingsPanel extends JPanel {
 	public final static int maxElement = 120; 
 	public final static int DEFAULT_SORT_SPEED = 5;
 	public final static int DEFAULT_COLOR_PRESET = 1;
-	private final String[] btnText = {"Start", "Exit", "GitHub", "Back to Menu"};
+	private final String[] btnText = {"Start", "Back to Menu", "GitHub", "Exit"};
 	private final String[] sortText = {"BUBBL", "SLCTN", "INSRTN", "MRGE", "QUCK", "SHLL"};
 	private int[] sortChoice = {0,1,2,3,4,5};
 	private int page = 1;
@@ -174,7 +172,8 @@ public class SettingsPanel extends JPanel {
 		
 		btnSetting[1].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				mainFrame.terminateSim();
+				mainFrame.dispose();
 			}
 		});
 		
@@ -190,7 +189,7 @@ public class SettingsPanel extends JPanel {
 		
 		btnSetting[3].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO return to menu
+				System.exit(0);
 			}
 		});
 		for(int i=0; i<4; i++) menuPanel.add(btnSetting[i]);
@@ -239,9 +238,7 @@ public class SettingsPanel extends JPanel {
 				sortBtnPanel.add(sortBtn[i][j]);
 			}
 		}
-		
-		//TODO add menu event
-		
+
 		setPageOne();
 	}
 	
