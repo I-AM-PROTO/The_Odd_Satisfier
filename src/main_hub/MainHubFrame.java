@@ -109,7 +109,7 @@ public class MainHubFrame extends JFrame {
 			case -1:{
 				quote = "Satisfactory experience may differ significantly. Sorry :(";
 				name = "";
-				qx = 140; nx = 100;
+				qx = 130; nx = 100;
 				break;
 			}
 			case 0:{
