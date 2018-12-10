@@ -161,7 +161,7 @@ class SortBox extends JPanel {
 			if(buffer[0] != -1)
 				bufferColor[0] = Integer.parseInt(array[buffer[0]].getName()) % 2 == 1 ? Color.PINK : Color.WHITE;
 			if(buffer[1] != -1)
-				bufferColor[1] = Integer.parseInt(array[buffer[1]].getName()) % 2 == 1 ? Color.PINK : Color.WHITE	;
+				bufferColor[1] = Integer.parseInt(array[buffer[1]].getName()) % 2 == 1 ? Color.PINK : Color.WHITE;
 			for(int i=0; i<SettingsPanel.maxElement; i++) {
 				array[i].setBackground(Integer.parseInt(array[i].getName()) % 2 == 1 ? Color.PINK : Color.WHITE);
 			}
