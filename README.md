@@ -11,7 +11,7 @@ Contents
 
      Visualised Sorting Algorithm (5-8)
          
-     <del>Visualised Genetic Algorithm</del> Cancelled due to lack of brain cells
+     ~~Visualised Genetic Algorithm~~ Cancelled due to lack of brain cells
 
 Plan 
 
@@ -19,9 +19,9 @@ Plan
 
      Week2(11/12 - 11/18): Snake autoplay AI + Swing implementation
      
-     Week3(11/19 - 11/25): Implement <del>sorting algorithms and visualize</del> main frame
+     Week3(11/19 - 11/25): Implement ~~sorting algorithms and visualize~~ main frame
      
-     Week4(11/26 - 12/2): <del>Genetic algorithm</del> Finish frame, implement algorithms
+     Week4(11/26 - 12/2): ~~Genetic algorithm~~ Finish frame, implement algorithms
      
      Week5(12/3 - 12/9) : Selection screen and overall debugging
 
