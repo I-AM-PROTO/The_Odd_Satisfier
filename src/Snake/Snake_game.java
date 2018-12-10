@@ -216,10 +216,10 @@ public class Snake_game {
 
 			if(!moveSnakeAndCheck()) {
 				if(gameResult) {
-					System.out.println("VIKTOOORY ROOOOYALE!!! *default dances*");
+					//System.out.println("VIKTOOORY ROOOOYALE!!! *default dances*");
 					mainFrame.repaintGameBoard(gameBoard);
 				} else {
-					System.out.println("Gameover");
+				    //System.out.println("Gameover");
 					mainFrame.repaintGameBoard(gameBoard);
 				}
 				resetGame();
