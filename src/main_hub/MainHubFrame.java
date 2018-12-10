@@ -5,23 +5,35 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Snake.*;
 import sorter.Main;
+
+//TODO color preset
 
 public class MainHubFrame extends JFrame {
 	public static final int WINDOW_WIDTH = 810;
@@ -52,7 +64,7 @@ public class MainHubFrame extends JFrame {
 	private BootScreen bootScreen = new BootScreen((int)(Math.random() * 11));
 	private JButton[] menuBtn = new JButton[10];
 	private MainBackground mainBackground = new MainBackground(this);
-	private int egg = 10;
+	private int egg = 15;
 	private int mode = 0;
 	
 	public MainHubFrame() {
@@ -78,10 +90,10 @@ public class MainHubFrame extends JFrame {
 		
 		addKeyListener(new Egg(this));
 		
-		runMainBackground();
-		
 		this.setFocusable(true);
 		this.requestFocus();
+		
+		runMainBackground();
 	}
 	
 	class Egg extends KeyAdapter {
@@ -93,6 +105,10 @@ public class MainHubFrame extends JFrame {
 				egg--;
 			else if(e.getKeyChar() == '-')
 				egg++;
+			else if(e.getKeyChar() == 'd')
+				mainBackground.addDVD();
+			else if(e.getKeyChar() == 'v')
+				mainBackground.removeDVD();
 			m.requestFocus();
 		}
 	}
@@ -197,13 +213,22 @@ public class MainHubFrame extends JFrame {
 		private MainHubFrame mhf;
 		private int enterStage = -1;
 		private int enterInterval = 500;
-		Image DVD = new ImageIcon("./res/DVD.jpg").getImage().getScaledInstance(DVD_WIDTH, DVD_HEIGHT, Image.SCALE_SMOOTH);
-		int[] DVDpos = {(int)(Math.random() * (WINDOW_WIDTH - DVD_WIDTH)), (int)(Math.random() * (WINDOW_HEIGHT - DVD_HEIGHT))};
-		int[] DVDmov = {DVDpos[0] % 2 == 1 ? -1 : 1, DVDpos[1] % 2 == 1 ? -1 : 1};
-		
+		Image DVD;
+		Vector<Point> DVDpos = new Vector<Point>();
+		Vector<Point> DVDmov = new Vector<Point>();
+
 		public MainBackground (MainHubFrame mhf) {
+			BufferedImage img = null;
+			try {
+				img = ImageIO.read(new File("./res/DVD.png"));
+			} catch (IOException e) {}
+			
+			DVD = img.getScaledInstance(DVD_WIDTH, DVD_HEIGHT, Image.SCALE_SMOOTH);
+			
+			addDVD();
 			this.mhf = mhf;
 			setLayout(null);
+			setBackground(Color.WHITE);
 			for(int i=0; i<10; i++) {
 				menuBtn[i] = new JButton(i >= 6 ? btnStr[i-6] : null);
 				menuBtn[i].setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
@@ -218,12 +243,23 @@ public class MainHubFrame extends JFrame {
 				menuBtn[i].addActionListener(new MenuListener(mhf));
 			}
 		}
+
+		private void addDVD() {
+			DVDpos.add(new Point((int)(Math.random() * (WINDOW_WIDTH - DVD_WIDTH)), (int)(Math.random() * (WINDOW_HEIGHT - DVD_HEIGHT))));
+			DVDmov.add(new Point(DVDpos.get(DVDpos.size()-1).x % 2 == 1 ? -2 : 2, DVDpos.get(DVDpos.size()-1).y % 2 == 1 ? -2 : 2));
+		}
 		
+		private void removeDVD() {
+			if(DVDpos.size() == 0) return;
+			DVDpos.remove(DVDpos.size()-1);
+			DVDmov.remove(DVDmov.size()-1);
+		}
+
 		public void enterSequence () {
 			interval(enterInterval);
 			enterStage++;
 			revalidate(); repaint();
-			interval(enterInterval);
+			interval(enterInterval * 2);
 			enterStage++;
 			revalidate(); repaint();
 			interval(enterInterval);
@@ -247,13 +283,16 @@ public class MainHubFrame extends JFrame {
 			enterStage++;
 			revalidate(); repaint();
 		}
-		
+
 		public void paintComponent (Graphics g) {
 			super.paintComponent(g);
-			setBackground(Color.WHITE);
 
 			switch(enterStage) {
-			case 2: g.drawImage(DVD, DVDpos[0] += DVDmov[0], DVDpos[1] += DVDmov[1], this);
+			case 2: {
+				for(int i=0; i<DVDpos.size(); i++) {
+					g.drawImage(DVD, DVDpos.get(i).x += DVDmov.get(i).x, DVDpos.get(i).y += DVDmov.get(i).y, this);
+				}
+			}
 			case 1:{
 				g.setFont(new Font("Comic Sans MS", Font.BOLD, 15));
 				g.drawString("the best way to sweep your crippling depression under the rug haha", 120, 125);
@@ -265,7 +304,7 @@ public class MainHubFrame extends JFrame {
 			}
 		}
 	}
-	
+
 	class MenuListener implements ActionListener {
 		private MainHubFrame mhf;
 		public MenuListener(MainHubFrame mhf) { this.mhf = mhf; }
@@ -312,7 +351,7 @@ public class MainHubFrame extends JFrame {
 				break;
 			}
 			case 6:{
-				JOptionPane.showMessageDialog(mhf, "Korea Univ. #2018320120 ±èµ¿ÈÄ", "I apologize for this abomination", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(mhf, "Korea Univ. #2018320120 ±èµ¿ÈÄ", "Press + and - for eggs", JOptionPane.PLAIN_MESSAGE);
 				break;
 			}
 			case 7:{
@@ -374,11 +413,13 @@ public class MainHubFrame extends JFrame {
 	private void runMainBackground() {
 		while(true) {
 			interval(egg);
-			if(mainBackground.DVDpos[0] >= WINDOW_WIDTH - DVD_WIDTH || mainBackground.DVDpos[0] <= 0) {
-				mainBackground.DVDmov[0] = mainBackground.DVDpos[0] <= 0 ? 1 : -1;
-			}
-			if(mainBackground.DVDpos[1] >= WINDOW_HEIGHT - DVD_HEIGHT || mainBackground.DVDpos[1] <= 0) {
-				mainBackground.DVDmov[1] = mainBackground.DVDpos[1] <= 0 ? 1 : -1;
+			for(int i=0; i < mainBackground.DVDpos.size(); i++) {
+				if(mainBackground.DVDpos.get(i).x >= WINDOW_WIDTH - DVD_WIDTH || mainBackground.DVDpos.get(i).x <= 0) {
+					mainBackground.DVDmov.get(i).x = mainBackground.DVDpos.get(i).x <= 0 ? 2 : -2;
+				}
+				if(mainBackground.DVDpos.get(i).y >= WINDOW_HEIGHT - DVD_HEIGHT || mainBackground.DVDpos.get(i).y <= 0) {
+					mainBackground.DVDmov.get(i).y = mainBackground.DVDpos.get(i).y <= 0 ? 2 : -2;
+				}
 			}
 			mainBackground.revalidate();
 			mainBackground.repaint();
