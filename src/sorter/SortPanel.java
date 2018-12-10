@@ -71,6 +71,7 @@ class SortBox extends JPanel {
 		
 		for(int i=0; i<SettingsPanel.maxElement; i++) {
 			array[i] = new JPanel();
+			array[i].setName(Integer.toString(i));
 		}
 		
 		setColorPreset(SettingsPanel.DEFAULT_COLOR_PRESET);
@@ -112,7 +113,6 @@ class SortBox extends JPanel {
 	public void swap () {
 		Dimension aDim = array[buffer[0]].getSize();
 		Dimension bDim = array[buffer[1]].getSize();
-		
 		array[buffer[0]].setPreferredSize(bDim);
 		array[buffer[0]].setMaximumSize(bDim);
 		array[buffer[0]].setBackground(bufferColor[1]);
@@ -129,7 +129,6 @@ class SortBox extends JPanel {
 		Dimension bDim = array[b].getSize();
 		Color aColor = array[a].getBackground();
 		Color bColor = array[b].getBackground();
-		
 		array[a].setPreferredSize(bDim);
 		array[a].setMaximumSize(bDim);
 		array[a].setBackground(bColor);
@@ -159,20 +158,28 @@ class SortBox extends JPanel {
 			break;
 		}
 		case 2:{
-			bufferColor[0] = buffer[0] % 2 == 1 ? Color.PINK : Color.RED;
-			bufferColor[1] = buffer[1] % 2 == 1 ? Color.PINK : Color.RED;
+			if(buffer[0] != -1)
+				bufferColor[0] = Integer.parseInt(array[buffer[0]].getName()) % 2 == 1 ? Color.PINK : Color.WHITE;
+			if(buffer[1] != -1)
+				bufferColor[1] = Integer.parseInt(array[buffer[1]].getName()) % 2 == 1 ? Color.PINK : Color.WHITE	;
 			for(int i=0; i<SettingsPanel.maxElement; i++) {
-				array[i].setBackground((array[i].getWidth() / inter) % 2 == 1 ? Color.PINK : Color.RED);
+				array[i].setBackground(Integer.parseInt(array[i].getName()) % 2 == 1 ? Color.PINK : Color.WHITE);
 			}
 			break;
 		}
 		case 3:{
+			if(buffer[0] != -1)
+				bufferColor[0] = new Color(Color.HSBtoRGB((float)Integer.parseInt(array[buffer[0]].getName())/SettingsPanel.maxElement, 1, 1));
+			if(buffer[1] != -1)
+				bufferColor[1] = new Color(Color.HSBtoRGB((float)Integer.parseInt(array[buffer[1]].getName())/SettingsPanel.maxElement, 1, 1));
 			for(int i=0; i<SettingsPanel.maxElement; i++) {
-				array[i].setBackground(Color.YELLOW);
+				array[i].setBackground(new Color(Color.HSBtoRGB((float)Integer.parseInt(array[i].getName())/SettingsPanel.maxElement, 1, 1)));
 			}
 			break;
 		}
 		case 4:{
+			bufferColor[0] = Color.decode("#" + Integer.toHexString((int)(Math.random()*(Integer.parseInt("FFFFFF", 16)))+1).toUpperCase());
+			bufferColor[1] = Color.decode("#" + Integer.toHexString((int)(Math.random()*(Integer.parseInt("FFFFFF", 16)))+1).toUpperCase());
 			for(int i=0; i<SettingsPanel.maxElement; i++) {
 				array[i].setBackground(Color.decode("#" + Integer.toHexString((int)(Math.random()*(Integer.parseInt("FFFFFF", 16)))+1).toUpperCase()));
 			}
