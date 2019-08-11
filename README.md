@@ -1,5 +1,5 @@
 # The_Odd_Satisfier
-This is a simulator of several oddly satisfying things you've probably seen in youtube. Unarguably the best method to relieve your clinical depression.
+This is a simulator of several oddly satisfying things you've probably seen on youtube. Unarguably the best method to relieve your clinical depression.
 
 Creator: Korea Univ. COSE102 - 2018320120 Kim DongHu
 
@@ -25,8 +25,6 @@ Plan:
      
   * Week5(12/3 - 12/9) : Selection screen and overall debugging
 
-*Updated 11/14, 2018
-
-*Second update 11/26, 2018
-
+*Updated 11/14, 2018  
+*Second update 11/26, 2018  
 *Third update 12/10, 2018
